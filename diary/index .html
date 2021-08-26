@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class = 'flex'>
+    <div class = 'left'>
+      <div id = 'diary-reading' class = 'diary-reading'>
+        <div id = 'read-name' class = 'read-name'>&nbsp</div>
+        <div id = 'read-day' class = 'read-day'>&nbsp</div>
+        <div id = 'read-text' class = 'read-text'>&nbsp</div>
+      </div>
+      <button id = 'reading-btn' class = 'btn'>日記を見る</button>
+    </div>
+    <div class = 'right'>
+      <div id = 'diary-writting' class = 'diary-writting'>
+        <form>
+          <div class = 'writ-name'>
+            筆者<input type="text" id='name' class="name" style=border:none>
+          </div>
+          <div class = 'writ-text'>
+            <textarea id="text" rows="20" cols="40" class='text' style=border:none></textarea>
+          </div>
+          <div>
+            <button type="button" id="send">送る</button>
+          </div>
+        </form>
+      </div>
+      <button id = 'writting-btn' class = 'btn'>日記を書く</button>
+    </div>
+  </div>
+
+  </div>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "",
+    authDomain: "diary-4e689.firebaseapp.com",
+    projectId: "diary-4e689",
+    storageBucket: "diary-4e689.appspot.com",
+    messagingSenderId: "856960933127",
+    appId: "1:856960933127:web:07f4634a5e52742597f9a2",
+    measurementId: "G-P96PFN44S2"
+  };
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
+<script>
+  function day(timestamp) {
+    console.log(timestamp);
+    const _d = timestamp ? new Date(timestamp * 1000) : new Date();
+    const Y = _d.getFullYear();
+    const m = (_d.getMonth() + 1).toString().padStart(2, '0');
+    const d = _d.getDate().toString().padStart(2, '0');
+    return `${Y}/${m}/${d}`;
+  }
+
+  const db = firebase.firestore().collection('diary');
+  const dataArray = [];  
+
+  db.orderBy('time', 'desc').onSnapshot(function (querySnapshot) {
+    console.log(querySnapshot.docs);
+
+    querySnapshot.docs.forEach(function (doc) {
+      const data = {
+        id: doc.id,
+        data: doc.data(),
+      };
+      dataArray.push(data);
+    });
+  });
+
+  /*日記を書くボタン*/
+  $('#writting-btn').on('click', function(){
+    $('#diary-writting').show();
+  });
+
+  $('#send').on('click', function(){
+    const data = {
+      name: $('#name').val(),
+      text: $('#text').val(),
+      time: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+  db.add(data);
+  $('#text').val('');
+  });
+
+  /*日記を読むボタン*/
+  $('#reading-btn').on('click', function(){
+    $('#diary-reading').show();
+    $('#read-day').text('');
+    $('#read-text').text('');
+    const array = [];
+    dataArray.forEach(function (data) {
+      array.push(`<div class='name-view'><p>${data.data.name}</p></div>`);
+    });
+    const set = new Set(array);
+    const nameArray = Array.from(set);
+    $('#read-name').html(nameArray);
+
+    console.log(nameArray);
+  });
+
+  $('#read-name').on('click', '.name-view', function(){
+    $('#read-text').text('');
+    const name = $(this).text();
+    const tagArray = [];
+    dataArray.forEach(function (data) {
+      if(`${data.data.name}` === name){
+        tagArray.push(`<div id="${data.id}" class='day-view'><p>${day(data.data.time.seconds)}</p></div>`);
+      };
+    });
+    $('#read-day').html(tagArray);
+  });
+
+  $('#read-day').on('click', '.day-view', function(){
+    const id = $(this).attr('id');
+    dataArray.forEach(function (data) {
+      if(`${data.id}` === id){
+        $('#read-text').html(`<p>${data.data.text}</p>`);
+      };
+    });
+  })
+
+
+</script>
+</body>
+</html>

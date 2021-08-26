@@ -1,0 +1,83 @@
+@charset "utf-8";
+html{
+    font-size:62.5%;
+}
+
+body{
+    background-color: rgba(0, 0, 0, 0.212);
+    color: #333;
+    font-family:"Open Sans",'ヒラギノ角ゴ ProN W3', Hiragino Kaku Gothic ProN, "メイリオ", Meiryo, sans-serif;
+    font-size:1.6rem;
+}
+
+.flex{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left{
+    text-align: center;
+    width: 50%;
+    height: 60rem;
+}
+
+.right{
+    text-align: center;
+    width: 50%;
+    height: 60rem;
+}
+
+.diary-writting{
+    margin:  10% auto 0;
+    width: 80%;
+    height: 100%;
+    text-align: left;
+    display: none;
+}
+
+.writ-name{
+    width: 80%;
+    height: 8%;
+    margin: 10% auto;
+    background-color: #fff;
+}
+
+.name{
+    width: 80%;
+}
+
+.text{
+    width: 100%;
+}
+
+.writ-text{
+    height: 60%;
+    margin: 5%;
+    background-color: #fff;
+}
+
+.diary-reading{
+    margin:  10% auto 0;
+    width: 80%;
+    height: 100%;
+    text-align: left;
+    display: none;
+}
+
+.read-name{
+    height: 10%;
+    margin: 5% 0;  
+    background-color: #fff;
+}
+
+.read-day{
+    height: 20%;
+    margin: 5% 0;
+    background-color: #fff;
+}
+
+.read-text{
+    height: 50%;
+    background-color: #fff;
+}
